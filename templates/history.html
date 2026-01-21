@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="gradient-text mb-4">History</h2>
+    {% if history %}
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Action</th>
+                    <th>File / Input</th>
+                    <th>Summary</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in history %}
+                <tr style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#historyModal{{ row[0] }}">
+                    <td>{{ loop.index }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3][:100] }}{% if row[3]|length > 100 %}...{% endif %}</td>
+                    <td>{{ row[4] }}</td>
+                </tr>
+
+                <!-- Modal for this row -->
+                <div class="modal fade" id="historyModal{{ row[0] }}" tabindex="-1" aria-labelledby="historyModalLabel{{ row[0] }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="historyModalLabel{{ row[0] }}">{{ row[1] }} - {{ row[4] }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>File / Input:</strong> {{ row[2] }}</p>
+                                <p><strong>Summary:</strong></p>
+                                <pre style="white-space: pre-wrap;">{{ row[3] }}</pre>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No history found.</p>
+    {% endif %}
+</div>
+{% endblock %}

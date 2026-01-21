@@ -1,0 +1,267 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- HERO SECTION -->
+    <div class="row align-items-center mb-5">
+        <div class="col-md-7">
+            <h1 class="fw-bold gradient-text mb-3">
+                Welcome back 👋
+            </h1>
+            <p class="text-white-50 fs-5">
+                Turn your notes into clear knowledge.
+                Upload, summarize, and learn smarter.
+            </p>
+        </div>
+
+        <!-- STATS -->
+        <div class="col-md-5">
+            <div class="row g-3">
+                <div class="col-4">
+                    <div class="stat-card">
+                        <h4>{{ stats.notes }}</h4>
+                        <span>Notes</span>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-card">
+                        <h4>{{ stats.summaries }}</h4>
+                        <span>Summaries</span>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-card">
+                        <h4>{{ stats.plans }}</h4>
+                        <span>Plans</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION CARDS -->
+    <div class="row g-4">
+
+        <!-- PRIMARY ACTION -->
+        <div class="col-md-5">
+            <div class="glass-card h-100 highlight-card">
+                <div class="icon-circle subtle-glow mb-4">📄</div>
+
+                <h4 class="fw-bold text-white mb-2">
+                    Upload Your Notes
+                </h4>
+                <p class="text-white-50 mb-4">
+                    PDF or text files — we’ll handle the rest.
+                </p>
+
+                <a href="/upload" class="neo-btn w-100">
+                    Upload Now
+                </a>
+            </div>
+        </div>
+
+        <!-- SECONDARY -->
+        <div class="col-md-7">
+            <div class="row g-4 h-100">
+
+                <!-- SUMMARIZE -->
+                <div class="col-md-6">
+                    <div class="glass-card text-center h-100">
+                        <div class="icon-circle subtle-glow">🧠</div>
+
+                        <h5 class="mt-4 fw-bold text-white">
+                            Summarize Notes
+                        </h5>
+                        <p class="text-white-50">
+                            Get concise, exam-ready summaries
+                        </p>
+
+                        <a href="/summary" class="neo-btn w-100">
+                            Generate Summary
+                        </a>
+                    </div>
+                </div>
+
+                <!-- STUDY PLANNER -->
+                <div class="col-md-6">
+                    <div class="glass-card text-center h-100">
+                        <div class="icon-circle subtle-glow">📅</div>
+
+                        <h5 class="mt-4 fw-bold text-white">
+                            Study Planner
+                        </h5>
+                        <p class="text-white-50">
+                            Stay consistent and organized
+                        </p>
+
+                        <a href="/planner" class="neo-btn w-100">
+                            Open Planner
+                        </a>
+                    </div>
+                </div>
+
+                <!-- VOICE LEARNING ASSISTANT -->
+                <div class="col-md-12">
+                    <div class="glass-card h-100">
+                        <div class="icon-circle subtle-glow mb-3">🎧</div>
+
+                        <h5 class="fw-bold text-white">
+                            Voice Learning Assistant
+                        </h5>
+                        <p class="text-white-50 mb-3">
+                            Speak your notes, convert to text, then listen anytime
+                        </p>
+
+                        <textarea id="voiceText" class="form-control mb-3"
+                            rows="3"
+                            placeholder="Your spoken notes will appear here..."
+                            style="background: rgba(255,255,255,0.08); color: #fff; border: none;">
+                        </textarea>
+
+                        <button class="neo-btn w-100 mb-2" onclick="startVoiceInput()">
+                            🎤 Convert to Text  
+                        </button>
+
+                        <button class="neo-btn w-100" onclick="generateVoice()">
+                            🔊 Convert to Audio
+                        </button>
+
+                        <audio id="voicePlayer" controls class="w-100 mt-3" style="display:none;"></audio>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+body {
+    background: radial-gradient(circle at top, #020617, #020617 40%);
+    color: #e5e7eb;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, #38bdf8, #a78bfa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(78,84,200,0.5);
+}
+
+.glass-card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(16px);
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+}
+
+.highlight-card {
+    border: 1px solid rgba(56,189,248,0.25);
+}
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.subtle-glow {
+    box-shadow: 0 0 16px rgba(56,189,248,0.35),
+                0 0 28px rgba(167,139,250,0.25);
+}
+
+.neo-btn {
+    padding: 14px 0;
+    font-weight: 600;
+    color: #e5e7eb;
+    background: #020617;
+    border-radius: 50px;
+    border: 1px solid rgba(148,163,184,0.25);
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.neo-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px rgba(56,189,248,0.45);
+}
+</style>
+
+<script>
+function startVoiceInput() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert("Your browser does not support Speech Recognition");
+        return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = function () {
+        alert("Convert to text...");
+    };
+
+    recognition.onresult = function (event) {
+        const spokenText = event.results[0][0].transcript;
+        document.getElementById("voiceText").value += " " + spokenText;
+    };
+
+    recognition.onerror = function (event) {
+        alert("Voice error: " + event.error);
+    };
+
+    recognition.start();
+}
+
+function generateVoice() {
+    const text = document.getElementById("voiceText").value.trim();
+    if (text.length < 5) {
+        alert("Enter proper study content");
+        return;
+    }
+
+    fetch("/text-to-speech", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "text=" + encodeURIComponent(text)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.audio_url) {
+            const player = document.getElementById("voicePlayer");
+            player.src = data.audio_url;
+            player.style.display = "block";
+            player.play();
+        } else {
+            alert("Audio generation failed");
+        }
+    });
+}
+</script>
+
+{% endblock %}

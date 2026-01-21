@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Planner Pro | Premium Task Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #020617;
+            --accent-blue: #3b82f6;
+            --neon-blue: #60a5fa;
+            --glass-card: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f1f5f9;
+            --text-dim: #94a3b8;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 0%, #1e3a8a, #020617 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+             /* Dashboard Button */
+            #dashboard-btn {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: 600;
+            background: #0d6efd;
+            border: none;
+            transition: 0.2s ease;
+            color: white;
+           
+        }
+      
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
+
+        /* --- HEADER --- */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-top: 20px; }
+        
+        .stats-row { display: flex; gap: 40px; }
+        
+        /* --- GLOW ANIMATION --- */
+        @keyframes continuousGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.6); border-color: rgba(255, 255, 255, 1); }
+            100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); }
+        }
+
+        .stat-box { 
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            /* IMAGE RESTORED HERE */
+            background: radial-gradient(circle, rgba(15, 23, 42, 0.2) 0%, rgba(2, 6, 23, 0.8) 100%), url('/static/background.png');            background-size: cover;
+            background-size: cover;
+            border: 4px solid rgba(255, 255, 255, 0.8); 
+            transition: var(--transition);
+            animation: continuousGlow 0.5s infinite ease-in-out;
+        }
+
+        .stat-box span { font-size: 2.5rem; font-weight: 800; }
+        .stat-box label { font-size: 11px; text-transform: capitalize; color: var(--text-dim); }
+        
+        #statTotal { color: #22d3ee; } 
+        #statDone { color: #4ade80; } 
+
+        .dashboard-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 400px; 
+            gap: 30px; 
+            align-items: start;
+        }
+
+        .glass-panel { 
+            /* IMAGE RESTORED HERE */
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('/static/background.png');            background-size: cover;
+            background-position: center;
+            backdrop-filter: blur(20px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 28px; 
+            padding: 35px;
+        }
+
+        .task-list { display: grid; gap: 15px; }
+        .task-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 22px; 
+            border-radius: 24px;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .task-meta { 
+            font-size: 13px; 
+            font-weight: 600; 
+            color: #3b82f6; 
+            margin-bottom: 8px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .task-name { 
+            font-size: 1.4rem; 
+            font-weight: 400; 
+            color: white; 
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-action-row { display: flex; gap: 15px; }
+        .btn-remove { 
+            background: none; 
+            border: none; 
+            color: #ef4444; 
+            cursor: pointer; 
+            font-size: 14px; 
+            padding: 0;
+            font-weight: 500;
+        }
+        .btn-complete {
+            background: none;
+            border: none;
+            color: #10b981;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 0;
+        }
+
+        .category-input-group { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 15px; 
+        }
+        .input-add-subject { 
+            flex: 1; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid var(--glass-border); 
+            padding: 10px 15px; 
+            border-radius: 10px; 
+            color: white; 
+            font-size: 13px; 
+            outline: none; 
+        }
+        .btn-add-subject { 
+            background: var(--accent-blue); 
+            border: none; 
+            color: white; 
+            padding: 0 15px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .btn-add-subject:hover { background: var(--neon-blue); }
+
+        .input-main { 
+            width: 100%; 
+            box-sizing: border-box; 
+            background: rgba(0, 0, 0, 0.2); 
+            border: 1px solid var(--glass-border); 
+            padding: 14px; 
+            border-radius: 14px; 
+            color: white; 
+            margin-top: 8px; 
+            outline: none; 
+        }
+
+        .btn-save { width: 100%; padding: 18px; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 16px; color: white; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        .days-nav { display: flex; gap: 10px; margin-bottom: 30px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 18px; }
+        .day-tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 12px; color: var(--text-dim); }
+        .day-tab.active { background: var(--accent-blue); color: white; }
+        
+        .subject-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .subject-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .subject-chip.selected { background: var(--accent-blue); color: white; border-color: var(--neon-blue); }
+    </style>
+</head>
+<body>
+<!-- Dashboard Button -->
+<a href="/dashboard" id="dashboard-btn" class="btn btn-primary">Dashboard</a>
+<div class="container">
+    <header class="header">
+        <div>
+            <h1 style="margin:0">StudyPlanner</h1>
+            <p id="dateDisplay" style="color:var(--text-main); margin:5px 0 0 0; font-weight: 500; font-family: monospace; font-size: 1.1rem;"></p>
+        </div>
+        <div class="stats-row">
+            <div class="stat-box">
+                <span id="statTotal">0</span>
+                <label>Total</label>
+            </div>
+            <div class="stat-box">
+                <span id="statDone">0</span>
+                <label>Done</label>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <main class="glass-panel">
+            <div class="days-nav" id="viewDayPicker">
+                <div class="day-tab active">Mon</div><div class="day-tab">Tue</div>
+                <div class="day-tab">Wed</div><div class="day-tab">Thu</div>
+                <div class="day-tab">Fri</div><div class="day-tab">Sat</div>
+                <div class="day-tab">Sun</div>
+            </div>
+            <div id="taskDisplay" class="task-list"></div>
+        </main>
+
+        <aside class="glass-panel">
+            <h3 style="margin-top:0">✨ Create New Task</h3>
+            
+            <div style="margin-bottom:25px">
+                <label style="font-size:11px; color:var(--text-dim); font-weight:bold">TASK DESCRIPTION</label>
+                <input type="text" id="inTaskName" class="input-main" placeholder="What needs to be done?">
+            </div>
+
+            <div style="margin-bottom:25px">
+                <label style="font-size:11px; color:var(--text-dim); font-weight:bold; display:block; margin-bottom:10px">CATEGORY</label>
+                <div class="subject-grid" id="subjectPicker">
+                    <div class="subject-chip selected">Math</div>
+                    <div class="subject-chip">Physics</div>
+                    <div class="subject-chip">Coding</div>
+                </div>
+                <div class="category-input-group">
+                    <input type="text" id="customSubjectInput" class="input-add-subject" placeholder="New subject...">
+                    <button class="btn-add-subject" onclick="addCustomSubject()">Add</button>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px">
+                <div>
+                    <label style="font-size:11px; color:var(--text-dim); font-weight:bold">DAY</label>
+                    <select id="inTaskDay" class="input-main">
+                        <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+                        <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:11px; color:var(--text-dim); font-weight:bold">TIME</label>
+                    <input type="time" id="inTaskTime" class="input-main" value="09:00">
+                </div>
+            </div>
+            <button class="btn-save" onclick="createTask()">Add to Schedule</button>
+        </aside>
+    </div>
+</div>
+
+<script>
+    let activeDay = 'Mon';
+    let currentSubject = 'Math';
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // REAL TIME CLOCK FUNCTION
+    function updateLiveTime() {
+        const now = new Date();
+        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+        const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+        
+        const dateStr = now.toLocaleDateString('en-US', dateOptions);
+        const timeStr = now.toLocaleTimeString('en-US', timeOptions);
+        
+        document.getElementById('dateDisplay').innerHTML = `${dateStr} | <span style="color:var(--neon-blue)">${timeStr}</span>`;
+    }
+    
+    setInterval(updateLiveTime, 1000);
+    updateLiveTime();
+
+    document.getElementById('subjectPicker').addEventListener('click', (e) => {
+        if(e.target.classList.contains('subject-chip')) {
+            document.querySelectorAll('.subject-chip').forEach(c => c.classList.remove('selected'));
+            e.target.classList.add('selected');
+            currentSubject = e.target.innerText;
+        }
+    });
+
+    function addCustomSubject() {
+        const input = document.getElementById('customSubjectInput');
+        const value = input.value.trim();
+        if(!value) return;
+        const grid = document.getElementById('subjectPicker');
+        const newChip = document.createElement('div');
+        newChip.className = 'subject-chip';
+        newChip.innerText = value;
+        grid.appendChild(newChip);
+        input.value = '';
+    }
+
+    function createTask() {
+        const name = document.getElementById('inTaskName').value;
+        const daySelect = document.getElementById('inTaskDay').value;
+        const day = daySelect.substring(0,3);
+        const time = document.getElementById('inTaskTime').value;
+        if(!name) return;
+        tasks.push({ id: Date.now(), name, subject: currentSubject, day, time, completed: false });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        render();
+        document.getElementById('inTaskName').value = '';
+    }
+
+    function toggleComplete(id) {
+        tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        render();
+    }
+
+    function deleteTask(id) {
+        tasks = tasks.filter(t => t.id !== id);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        render();
+    }
+
+    function render() {
+        const list = document.getElementById('taskDisplay');
+        list.innerHTML = '';
+        const filtered = tasks.filter(t => t.day === activeDay);
+        filtered.sort((a, b) => a.time.localeCompare(b.time));
+
+        filtered.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.style.opacity = t.completed ? '0.6' : '1';
+            card.innerHTML = `
+                <div class="task-meta">${t.subject} • ${t.time}</div>
+                <div class="task-name" style="${t.completed ? 'text-decoration: line-through' : ''}">${t.name}</div>
+                <div class="btn-action-row">
+                    <button class="btn-complete" onclick="toggleComplete(${t.id})">${t.completed ? 'Undo' : 'Complete'}</button>
+                    <button class="btn-remove" onclick="deleteTask(${t.id})">Remove</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+        document.getElementById('statTotal').innerText = tasks.length;
+        document.getElementById('statDone').innerText = tasks.filter(t => t.completed).length;
+    }
+
+    document.getElementById('viewDayPicker').addEventListener('click', (e) => {
+        if(e.target.classList.contains('day-tab')) {
+            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            activeDay = e.target.innerText;
+            render();
+        }
+    });
+
+    render();
+</script>
+</body>
+</html>

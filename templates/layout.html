@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title if title else "Smart Notes" }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #0b0f1a;
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+
+        /* APP WRAPPER */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: rgba(20, 20, 35, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #38bdf8, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: #cbd5f5;
+            padding: 12px 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(56,189,248,0.12);
+            color: #fff;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(90deg, rgba(56,189,248,0.25), rgba(167,139,250,0.25));
+            color: #fff;
+        }
+
+      
+        
+        #voiceFeature:hover {
+            box-shadow: 0 0 12px rgba(56,189,248,0.8), 0 0 24px rgba(167,139,250,0.6);
+            background: linear-gradient(90deg, rgba(56,189,248,0.15), rgba(167,139,250,0.15));
+        }
+
+        /* MAIN AREA */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOP NAVBAR */
+        .topbar {
+            height: 64px;
+            background: rgba(20, 20, 35, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .user-dropdown {
+            color: #e5e7eb;
+        }
+
+        .dropdown-menu {
+            background: #111827;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .dropdown-item {
+            color: #e5e7eb;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(56,189,248,0.15);
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 40px;
+            flex: 1;
+        }
+
+        /* Glass card modal style */
+        .glass-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(56,189,248,0.2);
+            margin: auto;
+            font-size: 28px;
+        }
+        .subtle-glow {
+            box-shadow: 0 0 10px rgba(56,189,248,0.5);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">Smart Notes</div>
+
+        <a href="/dashboard" class="nav-link {% if title=='Dashboard' %}active{% endif %}">
+            <i class="bi bi-grid"></i> Dashboard
+        </a>
+
+        <a href="/summary" class="nav-link {% if title=='Summarize Text' %}active{% endif %}">
+            <i class="bi bi-lightbulb"></i> Summarize
+        </a>
+
+        <a href="/upload" class="nav-link {% if title=='Upload Notes' %}active{% endif %}">
+            <i class="bi bi-upload"></i> Upload Notes
+        </a>
+
+        <a href="/planner" class="nav-link {% if title=='Study Planner' %}active{% endif %}">
+            <i class="bi bi-calendar-check"></i> Planner
+        </a>
+
+        <a href="#" id="voiceFeature" class="nav-link">
+            <i class="bi bi-mic"></i> Voice
+        </a>
+
+        <a href="/history" class="nav-link {% if title=='History' %}active{% endif %}">
+            <i class="bi bi-clock-history"></i> History
+        </a>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- TOP NAVBAR -->
+        <div class="topbar">
+            <div class="dropdown">
+                <a class="user-dropdown dropdown-toggle text-decoration-none"
+                   href="#" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle me-1"></i>
+                    {{ session.get('username', 'User') }}
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="/settings">
+                            <i class="bi bi-gear me-2"></i> Settings
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" href="/logout">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PAGE CONTENT -->
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+
+</div>
+
+<!-- Voice Assistant Modal -->
+<div class="modal fade" id="voiceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: rgba(20,20,35,0.95); color:#fff; border:none; border-radius:12px;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Voice Learning Assistant</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="glass-card h-100 p-3">
+          <div class="icon-circle subtle-glow mb-3">🎧</div>
+          <p class="text-white-50 mb-3">Convert your notes into audio and listen anytime</p>
+          <textarea id="modalVoiceText" class="form-control mb-3"
+              rows="4"
+              placeholder="Paste your study notes here..."
+              style="background: rgba(255,255,255,0.08); color: #fff; border: none;"></textarea>
+          <button class="neo-btn w-100" id="modalVoiceBtn">Convert to Audio</button>
+          <audio id="modalVoicePlayer" controls class="w-100 mt-3" style="display:none;"></audio>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Voice Feature JS -->
+<script>
+document.getElementById("voiceFeature").addEventListener("click", function(e) {
+    e.preventDefault();
+    var voiceModal = new bootstrap.Modal(document.getElementById('voiceModal'));
+    voiceModal.show();
+});
+
+document.getElementById("modalVoiceBtn").addEventListener("click", function() {
+    let text = document.getElementById("modalVoiceText").value.trim();
+    if (!text || text.length < 5) {
+        alert("Please enter some text to convert.");
+        return;
+    }
+
+    fetch("/text-to-speech", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "text=" + encodeURIComponent(text)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.audio_url) {
+            let player = document.getElementById("modalVoicePlayer");
+            player.src = data.audio_url;
+            player.style.display = "block";
+            player.play();
+        } else if (data.error) {
+            alert("Error: " + data.error);
+        }
+    })
+    .catch(err => alert("Error: " + err));
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Notes Summarizer</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding: 30px;
+    position: relative;
+}
+.summary-box {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 25px;
+    height: 100%;
+    overflow-y: auto;
+    /* This ensures formatting and line breaks are respected */
+    white-space: pre-wrap; 
+    line-height: 1.6;
+    font-size: 1.05rem;
+    color: #2c3e50;
+}
+#dashboard-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.split-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.input-box, .summary-box-wrapper {
+    flex: 1 1 45%;
+    background: #f7f8fc;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 6px 6px 15px rgba(0,0,0,0.05),
+                -6px -6px 15px rgba(255,255,255,0.7);
+    min-height: 400px;
+}
+
+textarea {
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    border: none;
+    padding: 20px;
+    resize: none;
+    font-size: 1rem;
+    background: #f7f8fc;
+}
+
+.summary-box {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.btn-action {
+    border-radius: 50px;
+    padding: 10px 25px;
+    margin: 5px;
+}
+
+#clear-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+}
+
+#word-count {
+    font-size: 0.9rem;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<a href="/dashboard" id="dashboard-btn" class="btn btn-primary">
+    Dashboard
+</a>
+
+<div class="container">
+    <h2 class="text-center mb-4">Smart Notes Summarizer</h2>
+
+    {% if message %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endif %}
+
+    <div class="split-container">
+
+        <!-- INPUT -->
+        <div class="input-box position-relative">
+            <form method="POST" action="/summary">
+                <textarea id="text" name="text" placeholder="Paste or type your text here...">{{ original_text or '' }}</textarea>
+                <div class="text-end mt-2" id="word-count">Words: 0</div>
+                <button type="submit" class="btn btn-primary btn-action mt-3">
+                    Generate Summary
+                </button>
+            </form>
+            <button id="clear-btn" class="btn btn-secondary">&times;</button>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-box-wrapper">
+
+            {% if summary %}
+                <div class="summary-box" id="summary-box">
+                    {{ summary }}
+                </div>
+
+                <!-- BASIC ACTIONS -->
+                <div class="mt-3 text-center">
+                    <button class="btn btn-success btn-action" id="copy-btn">Copy</button>
+
+                    <form method="POST" action="/download_summary" style="display:inline;">
+                        <input type="hidden" name="summary_text" value="{{ summary }}">
+                        <button type="submit" class="btn btn-info btn-action">
+                            Download PDF
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 🔥 OPTION A: STUDY TOOLS (ONLY AFTER SUMMARY) -->
+                <div class="mt-4 text-center">
+                    <a href="/flashcards" class="btn btn-dark btn-action">
+                        Study with Flashcards
+                    </a>
+                    <a href="/questions" class="btn btn-outline-dark btn-action">
+                        Practice Questions
+                    </a>
+                </div>
+
+            {% else %}
+                <div class="summary-box" id="summary-box">
+                    Summary will appear here...
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+const textarea = document.getElementById('text');
+const summaryBox = document.getElementById('summary-box');
+const wordCount = document.getElementById('word-count');
+const clearBtn = document.getElementById('clear-btn');
+const copyBtn = document.getElementById('copy-btn');
+
+function updateWordCount() {
+    const text = textarea.value.trim();
+    wordCount.textContent = 'Words: ' + (text ? text.split(/\s+/).length : 0);
+}
+
+textarea.addEventListener('input', updateWordCount);
+updateWordCount();
+
+clearBtn.addEventListener('click', () => {
+    textarea.value = '';
+    if (summaryBox) summaryBox.textContent = 'Summary will appear here...';
+    updateWordCount();
+});
+
+if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(summaryBox.textContent);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1200);
+    });
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

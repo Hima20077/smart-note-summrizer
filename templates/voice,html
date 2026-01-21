@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2 class="fw-bold gradient-text mb-4">
+    Voice Notes 🎤
+</h2>
+
+<p class="text-white-50">
+    Convert text into voice and listen anytime.
+</p>
+
+<form id="ttsForm">
+    <textarea class="form-control mb-3" name="text" rows="5"
+              placeholder="Enter text to convert into voice..."></textarea>
+
+    <button class="btn btn-primary">Generate Voice</button>
+</form>
+
+<audio id="audioPlayer" class="mt-3 w-100" controls style="display:none;"></audio>
+
+<script>
+document.getElementById("ttsForm").onsubmit = async function(e) {
+    e.preventDefault();
+    const text = this.text.value;
+
+    const res = await fetch("/text-to-speech", {
+        method: "POST",
+        body: new URLSearchParams({ text })
+    });
+
+    const data = await res.json();
+    if (data.audio_url) {
+        const audio = document.getElementById("audioPlayer");
+        audio.src = data.audio_url;
+        audio.style.display = "block";
+        audio.play();
+    }
+};
+</script>
+
+{% endblock %}
